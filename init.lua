@@ -81,11 +81,9 @@ vim.opt.scrolloff = 4
 
 -- Keymaps for buffer switching
 -- Switch to previous buffer
--- vim.keymap.set('n', '<leader>h', '<cmd>:bp<cr>', { desc = 'Previous buffer' })
 vim.keymap.set('n', '<leader>h', '<Plug>(cokeline-focus-prev)', { desc = 'Previous buffer' })
 
 -- Switch to next buffer
--- vim.keymap.set('n', '<leader>l', '<cmd>:bn<cr>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<leader>l', '<Plug>(cokeline-focus-next)', { desc = 'Next buffer' })
 
 -- Switch to alternate buffer
@@ -97,6 +95,15 @@ vim.keymap.set('n', '<leader>bd', '<cmd>:bd<cr>', { desc = '[B]uffer [D]elete' }
 for i = 1, 9 do
   vim.keymap.set('n', ('<Leader>%s'):format(i), ('<Plug>(cokeline-focus-%s)'):format(i), { silent = true, desc = ('Switch to tab %s'):format(i) })
 end
+
+--
+-- Keymaps for cokeline swap
+--
+-- Swap with previous buffer
+vim.keymap.set('n', '<leader>H', '<Plug>(cokeline-switch-prev)', { desc = 'Previous buffer swap' })
+
+-- Swap with next buffer
+vim.keymap.set('n', '<leader>L', '<Plug>(cokeline-switch-next)', { desc = 'Next buffer swap' })
 
 -- Toggle Neotree
 vim.keymap.set('n', '<leader>tn', '<cmd>:Neotree focus toggle<cr>', { desc = '[T]oggle [N]eotree' })
