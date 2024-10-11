@@ -381,7 +381,7 @@ require('lazy').setup({
         cond = conditions.buffer_not_empty,
         color = { gui = 'bold' },
         fmt = function(input, ctx)
-          return '@/' .. input
+          return input
         end,
         path = 1,
       }
