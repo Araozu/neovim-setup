@@ -81,13 +81,22 @@ vim.opt.scrolloff = 4
 
 -- Keymaps for buffer switching
 -- Switch to previous buffer
-vim.keymap.set('n', '<leader>h', '<cmd>:bp<cr>', { desc = 'Previous buffer' })
+-- vim.keymap.set('n', '<leader>h', '<cmd>:bp<cr>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<leader>h', '<Plug>(cokeline-focus-prev)', { desc = 'Previous buffer' })
+
 -- Switch to next buffer
-vim.keymap.set('n', '<leader>l', '<cmd>:bn<cr>', { desc = 'Next buffer' })
+-- vim.keymap.set('n', '<leader>l', '<cmd>:bn<cr>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<leader>l', '<Plug>(cokeline-focus-next)', { desc = 'Next buffer' })
+
 -- Switch to alternate buffer
 vim.keymap.set('n', '<leader>a', '<cmd>:e #<cr>', { desc = '[A]lternate buffer' })
 -- Kill current buffer
 vim.keymap.set('n', '<leader>bd', '<cmd>:bd<cr>', { desc = '[B]uffer [D]elete' })
+
+-- cokeline switch to buffer at index x
+for i = 1, 9 do
+  vim.keymap.set('n', ('<Leader>%s'):format(i), ('<Plug>(cokeline-focus-%s)'):format(i), { silent = true, desc = ('Switch to tab %s'):format(i) })
+end
 
 -- Toggle Neotree
 vim.keymap.set('n', '<leader>tn', '<cmd>:Neotree focus toggle<cr>', { desc = '[T]oggle [N]eotree' })
@@ -173,7 +182,93 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons', -- If you want devicons
       'stevearc/resession.nvim', -- Optional, for persistent history
     },
-    config = true,
+    config = function()
+      local get_hex = require('cokeline.hlgroups').get_hl_attr
+      local hlgroups = require 'cokeline.hlgroups'
+      local yellow = vim.g.terminal_color_3
+      require('cokeline').setup {
+        default_hl = {
+          fg = function(buffer)
+            return buffer.is_focused and get_hex('ColorColumn', 'bg') or get_hex('Normal', 'fg')
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and get_hex('Normal', 'fg') or get_hex('ColorColumn', 'bg')
+          end,
+        },
+
+        sidebar = {
+          filetype = { 'NvimTree', 'neo-tree' },
+          components = {
+            {
+              text = function(buf)
+                return buf.filetype
+              end,
+              fg = yellow,
+              bg = function()
+                return get_hex('NvimTreeNormal', 'bg')
+              end,
+              bold = true,
+            },
+          },
+        },
+
+        components = {
+          {
+            text = function(buffer)
+              return ' ' .. buffer.index
+            end,
+          },
+          {
+            text = function(buffer)
+              return ' ' .. buffer.devicon.icon
+            end,
+            fg = function(buffer)
+              return buffer.devicon.color
+            end,
+          },
+          {
+            text = function(buffer)
+              return buffer.unique_prefix
+            end,
+            fg = function()
+              return hlgroups.get_hl_attr('Comment', 'fg')
+            end,
+            italic = true,
+          },
+          {
+            text = function(buffer)
+              return buffer.filename
+            end,
+            underline = function(buffer)
+              if buffer.is_hovered and not buffer.is_focused then
+                return true
+              end
+            end,
+          },
+          {
+            text = ' ',
+          },
+          {
+            ---@param buffer Buffer
+            text = function(buffer)
+              if buffer.is_modified then
+                return ''
+              end
+              if buffer.is_hovered then
+                return '󰅙'
+              end
+              return '󰅖'
+            end,
+            on_click = function(_, _, _, _, buffer)
+              buffer:delete()
+            end,
+          },
+          {
+            text = ' ',
+          },
+        },
+      }
+    end,
   },
 
   {
@@ -378,8 +473,15 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
+  -- Tokyo night theme
+  {
+    'folke/tokyonight.nvim',
+  },
   -- Xcode theme
   'arzg/vim-colors-xcode',
+  -- Rose pine theme
+  { 'rose-pine/neovim', name = 'rose-pine' },
+
   {
     'lewis6991/gitsigns.nvim',
     opts = {
