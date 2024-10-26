@@ -108,6 +108,9 @@ vim.keymap.set('n', '<leader>L', '<Plug>(cokeline-switch-next)', { desc = 'Next 
 -- Toggle Neotree
 vim.keymap.set('n', '<leader>tn', '<cmd>:Neotree focus toggle<cr>', { desc = '[T]oggle [N]eotree' })
 
+-- Toggle Neotree reveal
+vim.keymap.set('n', '<leader>tr', '<cmd>:Neotree reveal<cr>', { desc = '[T]oggle Neotree [R]eveal' })
+
 -- Git status with Telescope
 vim.keymap.set('n', '<leader>tg', '<cmd>:Telescope git_status<cr>', { desc = '[T]elescope [G]it status' })
 
