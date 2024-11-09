@@ -196,7 +196,20 @@ require('lazy').setup({
   -- display keystrokes as we type
   {
     'NStefan002/screenkey.nvim',
-    lazy = false,
+    config = function()
+      require('screenkey').setup {
+        win_opts = {
+          row = 2,
+          col = vim.o.columns - 1,
+          anchor = 'NE',
+
+          --           With relative=editor (row=0,col=0) refers to the top-left corner of the
+          -- screen-grid and (row=Lines-1,col=Columns-1) refers to the bottom-right
+          -- corner. Fractional values are allowed, but the builtin implementation
+          -- (used by non-multigrid UIs) will always round down to nearest integer.
+        },
+      }
+    end,
   },
 
   {
