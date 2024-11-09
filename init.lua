@@ -184,6 +184,14 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  -- Emmet
+
+  {
+    'olrtg/nvim-emmet',
+    config = function()
+      vim.keymap.set({ 'n', 'v' }, '<leader>xe', require('nvim-emmet').wrap_with_abbreviation)
+    end,
+  },
 
   {
     'willothy/nvim-cokeline',
@@ -473,15 +481,70 @@ require('lazy').setup({
 
   {
     'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
+    config = function()
+      require('gitsigns').setup {
+        signs = {
+          add = { text = '+' },
+          change = { text = '~' },
+          delete = { text = '_' },
+          topdelete = { text = '‾' },
+          changedelete = { text = '~' },
+        },
+
+        on_attach = function(bufnr)
+          local gitsigns = require 'gitsigns'
+
+          local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+
+          -- Navigation
+          map('n', ']c', function()
+            if vim.wo.diff then
+              vim.cmd.normal { ']c', bang = true }
+            else
+              gitsigns.nav_hunk 'next'
+            end
+          end, { desc = 'Previous Git hunk' })
+
+          map('n', '[c', function()
+            if vim.wo.diff then
+              vim.cmd.normal { '[c', bang = true }
+            else
+              gitsigns.nav_hunk 'prev'
+            end
+          end, { desc = 'Next Git hunk' })
+
+          -- Actions
+          map('n', '<leader>gs', gitsigns.stage_hunk, { desc = '[s]tage hunk' })
+          map('n', '<leader>gr', gitsigns.reset_hunk, { desc = '[r]eset hunk' })
+          map('v', '<leader>gs', function()
+            gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+          end, { desc = '[S]tage hunk' })
+          map('v', '<leader>gr', function()
+            gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+          end, { desc = '[R]eset hunk' })
+          map('n', '<leader>gS', gitsigns.stage_buffer, { desc = '[S]tage buffer' })
+          map('n', '<leader>gu', gitsigns.undo_stage_hunk, { desc = '[u]ndo stage hunk' })
+          map('n', '<leader>gR', gitsigns.reset_buffer, { desc = '[R]eset buffer' })
+          map('n', '<leader>gp', gitsigns.preview_hunk, { desc = '[p]review hunk' })
+          map('n', '<leader>gb', function()
+            gitsigns.blame_line { full = true }
+          end, { desc = '[b]lame line' })
+          map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = 'Toggle current line [b]lame' })
+          map('n', '<leader>gd', gitsigns.diffthis, { desc = '[d]iff this file' })
+          map('n', '<leader>gD', function()
+            gitsigns.diffthis '~'
+          end, { desc = '[D]iff this ~' })
+          map('n', '<leader>td', gitsigns.toggle_deleted, { desc = 'Toggle [d]eleted' })
+
+          -- Text object
+          map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+        end,
+      }
+    end,
   },
 
   { -- Useful plugin to show you pending keybinds.
@@ -603,16 +666,17 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       -- vim.keymap.set('n', '<leader>sr', builtin.lsp_references, { desc = '[S]earch [R]eferences' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      -- I do not fuzzy find the active buffers, almost never
+      vim.keymap.set('n', '<leader>/', builtin.buffers, { desc = '[/] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
+      vim.keymap.set('n', '<leader><leader>', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
           previewer = false,
         })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      end, { desc = '[ ] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -749,6 +813,12 @@ require('lazy').setup({
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
           end
+
+          -- show help of binding
+          local opts = { buffer = event.buf }
+          vim.keymap.set('n', 'gh', function()
+            vim.diagnostic.open_float()
+          end, { buffer = event.buf, desc = '[h] Open floating diagnostic' })
         end,
       })
 
