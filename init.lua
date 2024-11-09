@@ -193,6 +193,12 @@ require('lazy').setup({
     end,
   },
 
+  -- display keystrokes as we type
+  {
+    'NStefan002/screenkey.nvim',
+    lazy = false,
+  },
+
   {
     'willothy/nvim-cokeline',
     dependencies = {
