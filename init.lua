@@ -184,31 +184,31 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  -- Emmet
+  -- 'Exafunction/codeium.vim',
 
+  { 'Mofiqul/dracula.nvim' },
+
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    ---@module "ibl"
+    ---@type ibl.config
+    opts = {
+      indent = {
+        char = '▏',
+      },
+      scope = {
+        show_start = false,
+        show_end = false,
+      },
+    },
+  },
+
+  -- Emmet
   {
     'olrtg/nvim-emmet',
     config = function()
       vim.keymap.set({ 'n', 'v' }, '<leader>xe', require('nvim-emmet').wrap_with_abbreviation)
-    end,
-  },
-
-  -- display keystrokes as we type
-  {
-    'NStefan002/screenkey.nvim',
-    config = function()
-      require('screenkey').setup {
-        win_opts = {
-          row = 2,
-          col = vim.o.columns - 1,
-          anchor = 'NE',
-
-          --           With relative=editor (row=0,col=0) refers to the top-left corner of the
-          -- screen-grid and (row=Lines-1,col=Columns-1) refers to the bottom-right
-          -- corner. Fractional values are allowed, but the builtin implementation
-          -- (used by non-multigrid UIs) will always round down to nearest integer.
-        },
-      }
     end,
   },
 
