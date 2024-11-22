@@ -413,15 +413,15 @@ require('lazy').setup({
         },
       }
 
-      ins_left {
-        'filename',
-        cond = conditions.buffer_not_empty,
-        color = { gui = 'bold' },
-        fmt = function(input, ctx)
-          return input
-        end,
-        path = 1,
-      }
+      -- ins_left {
+      --   'filename',
+      --   cond = conditions.buffer_not_empty,
+      --   color = { gui = 'bold' },
+      --   fmt = function(input, ctx)
+      --     return input
+      --   end,
+      --   path = 1,
+      -- }
 
       -- Insert mid section. You can make any number of sections in neovim :)
       -- for lualine it's any number greater then 2
@@ -657,11 +657,19 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          layout_strategy = 'vertical',
+          layout_config = {
+            vertical = {
+              width = 0.6,
+            },
+            horizontal = {
+              height = 0.95,
+              width = 0.95,
+              preview_width = 0.5,
+            },
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {
@@ -688,14 +696,16 @@ require('lazy').setup({
       -- I do not fuzzy find the active buffers, almost never
       vim.keymap.set('n', '<leader>/', builtin.buffers, { desc = '[/] Find existing buffers' })
 
-      -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader><leader>', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
+      -- search colorchemes
+      vim.keymap.set('n', '<leader>sc', function()
+        builtin.colorscheme(require('telescope.themes').get_dropdown {
+          winblend = 20,
           previewer = false,
         })
-      end, { desc = '[ ] Fuzzily search in current buffer' })
+      end, { desc = '[S]earch [C]olorschemes' })
+
+      -- Slightly advanced example of overriding default behavior and theme
+      vim.keymap.set('n', '<leader><leader>', builtin.current_buffer_fuzzy_find, { desc = '[ ] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
