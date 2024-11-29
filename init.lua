@@ -187,6 +187,7 @@ require('lazy').setup({
   -- 'Exafunction/codeium.vim',
 
   { 'Mofiqul/dracula.nvim' },
+  { 'olimorris/onedarkpro.nvim' },
 
   {
     'lukas-reineke/indent-blankline.nvim',
