@@ -86,7 +86,7 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- Plugins
 --
-require('lazy').setup({
+require('lazy').setup {
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   --
   -- Color themes
@@ -1044,7 +1044,41 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
-}, {})
+}
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+--
+-- Load color themes based on the current path, by github copilot
+--
+
+-- Function to get the current working directory
+local function get_cwd()
+  return vim.fn.getcwd()
+end
+
+-- Function to set theme based on directory
+local function set_theme_for_directory()
+  local cwd = get_cwd()
+
+  -- Add your directory-theme mappings here
+  local directory_themes = {
+    ['/path/to/project1'] = 'gruvbox',
+    ['/path/to/project2'] = 'tokyonight',
+    -- Add more mappings as needed
+  }
+
+  -- Get the theme for the current directory, default to your preferred theme
+  local theme = directory_themes[cwd] or 'default_theme'
+
+  -- Set the colorscheme
+  vim.cmd('colorscheme ' .. theme)
+end
+
+-- Create an autocommand to run this when entering a directory
+vim.api.nvim_create_autocmd({ 'DirChanged' }, {
+  callback = function()
+    set_theme_for_directory()
+  end,
+})
+
+-- Also run it when Neovim starts
+set_theme_for_directory()
