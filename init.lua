@@ -53,15 +53,13 @@ vim.keymap.set('n', '<leader>tg', '<cmd>:Telescope git_status<cr>', { desc = '[T
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Disable arrow keys in normal mode
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Fold shortcuts
+vim.keymap.set('n', 'z$', '$zf%', { desc = 'Fold EOL & %' })
 
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -83,9 +81,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
---
 -- Plugins
---
 require('lazy').setup {
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   --
@@ -97,6 +93,13 @@ require('lazy').setup {
   'folke/tokyonight.nvim',
   'arzg/vim-colors-xcode',
   'rose-pine/neovim',
+  'Mofiqul/vscode.nvim',
+  'scottmckendry/cyberdream.nvim',
+  {
+    'zenbones-theme/zenbones.nvim',
+    dependencies = 'rktjmp/lush.nvim',
+    lazy = false,
+  },
 
   {
     'lukas-reineke/indent-blankline.nvim',
@@ -411,7 +414,7 @@ require('lazy').setup {
             else
               gitsigns.nav_hunk 'next'
             end
-          end, { desc = 'Previous Git hunk' })
+          end, { desc = 'Next Git hunk' })
 
           map('n', '[c', function()
             if vim.wo.diff then
@@ -419,7 +422,7 @@ require('lazy').setup {
             else
               gitsigns.nav_hunk 'prev'
             end
-          end, { desc = 'Next Git hunk' })
+          end, { desc = 'Previous Git hunk' })
 
           -- Actions
           map('n', '<leader>gs', gitsigns.stage_hunk, { desc = '[s]tage hunk' })
@@ -1057,8 +1060,8 @@ local function set_theme_for_directory()
 
   -- Add your directory-theme mappings here
   local directory_themes = {
-    ['/path/to/project1'] = 'gruvbox',
-    ['/path/to/project2'] = 'tokyonight',
+    ['/home/fernando/programmation/acide/trazo-frontend'] = 'onelight',
+    ['/home/fernando/programmation/acide/trazo-backend'] = 'github_light',
     -- Add more mappings as needed
   }
 
