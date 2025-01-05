@@ -4,6 +4,11 @@ My neovim config, based on kickstart.nvim
 
 --]]
 
+local disable_formatting = function(client)
+  client.server_capabilities.documentFormattingProvider = false
+  client.server_capabilities.documentRangeFormattingProvider = false
+end
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
@@ -643,6 +648,22 @@ require('lazy').setup {
     config = function()
       -- load gleam?
       require('lspconfig').gleam.setup {}
+
+      require('lspconfig').ts_ls.setup {
+        on_attach = function(client, bufnr)
+          disable_formatting(client) -- Disable tsserver formatting
+        end,
+      }
+
+      -- load eslint?
+      require('lspconfig').eslint.setup {
+        on_attach = function(client, bufnr)
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            command = 'EslintFixAll',
+          })
+        end,
+      }
 
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
