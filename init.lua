@@ -777,6 +777,7 @@ require('lazy').setup {
         gopls = {},
         clojure_lsp = {},
         tailwindcss = {},
+        eslint = {},
         lua_ls = {
           settings = {
             Lua = {
@@ -1079,11 +1080,9 @@ require('lazy').setup {
 local function set_theme_for_directory()
   local cwd = vim.fn.getcwd()
 
-  -- Add your directory-theme mappings here
   local directory_themes = {
     ['/home/fernando/programmation/acide/trazo-frontend'] = 'onelight',
     ['/home/fernando/programmation/acide/trazo-backend'] = 'github_light',
-    -- Add more mappings as needed
   }
 
   -- Get the theme for the current directory, default to your preferred theme
